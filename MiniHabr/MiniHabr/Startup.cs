@@ -14,6 +14,7 @@ using MiniHabr.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using MiniHabr.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace MiniHabr
 {
@@ -27,21 +28,46 @@ namespace MiniHabr
       public IConfiguration Configuration { get; }
 
       // This method gets called by the runtime. Use this method to add services to the container.
-      public void ConfigureServices(IServiceCollection services)
-      {
-         services.Configure<CookiePolicyOptions>(options =>
-         {
-               // This lambda determines whether user consent for non-essential cookies is needed for a given request.
-               options.CheckConsentNeeded = context => true;
+      //public void ConfigureServices(IServiceCollection services)
+      //{
+      //   services.Configure<CookiePolicyOptions>(options =>
+      //   {
+      //         // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+      //         options.CheckConsentNeeded = context => true;
+      //      options.MinimumSameSitePolicy = SameSiteMode.None;
+      //   });
+
+      //   services.AddDbContext<ApplicationDbContext>(options =>
+      //   options
+      //      .UseLazyLoadingProxies()
+      //      .UseSqlServer(
+      //         Configuration.GetConnectionString("DefaultConnection"))
+      //       );
+
+      //   services.AddDefaultIdentity<User>()
+      //       .AddDefaultUI(UIFramework.Bootstrap4)
+      //       .AddEntityFrameworkStores<ApplicationDbContext>();
+
+      //   services.AddScoped<UserManager<User>>();
+      //       //.AddUserManager<UserManager<User>>();
+      //   services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+      //}
+
+      public void ConfigureServices(IServiceCollection services) {
+         services.Configure<CookiePolicyOptions>(options => {
+            // This lambda determines whether user consent for non-essential cookies is needed for a given request.
+            options.CheckConsentNeeded = context => true;
             options.MinimumSameSitePolicy = SameSiteMode.None;
          });
 
-         services.AddDbContext<ApplicationDbContext>(options =>
-             options.UseInMemoryDatabase(
-                 Configuration.GetConnectionString("DefaultConnection")));
+         services.AddDbContext<ApplicationDbContext>(opt => {
+            opt.UseInMemoryDatabase("demo");
+         });
          services.AddDefaultIdentity<User>()
-             .AddDefaultUI(UIFramework.Bootstrap4)
-             .AddEntityFrameworkStores<ApplicationDbContext>();
+                 .AddUserManager<UserManager<User>>()
+                 .AddEntityFrameworkStores<ApplicationDbContext>();
+
+
 
          services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
       }
