@@ -7,48 +7,29 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MiniHabr.Data;
 using MiniHabr.Models;
+using MiniHabr.Services.Abstractions;
 
-namespace MiniHabr.Controllers
-{
-   public class HomeController : Controller
-   {
-      private readonly UserManager<User> userManager;
-      private readonly ApplicationDbContext dbContext;
+namespace MiniHabr.Controllers {
+   public class HomeController : Controller {
+      private readonly IPostService postService;
+      private readonly ICommentService commentService;
 
-      public HomeController(UserManager<User> userManager, ApplicationDbContext dbContext)
-      {
-         this.userManager = userManager;
-         this.dbContext = dbContext;
+      public HomeController(IPostService postService, ICommentService commentService) {
+         this.postService = postService;
+         this.commentService = commentService;
       }
 
-      public async Task<ActionResult> AddComment() {
-         try {
-            var user = await userManager.GetUserAsync(HttpContext.User);
-            this.dbContext.Posts.Add(new Post() {
-               Content = "Some post content",
-               PostDate = DateTime.Now,
-               User = user,
-            });
-            dbContext.SaveChanges();
-            return Ok();
-         } catch (Exception ex) {
-            return BadRequest(ex.Message);
-         }
-      }
-
-      public IActionResult Index()
-      {
+      public IActionResult Index() {
+         
          return View();
       }
 
-      public IActionResult Privacy()
-      {
+      public IActionResult Privacy() {
          return View();
       }
 
       [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-      public IActionResult Error()
-      {
+      public IActionResult Error() {
          return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
       }
    }
